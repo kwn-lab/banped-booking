@@ -3,110 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจองห้องทานอาหารส่วนตัว - ABC</title>
+    <title>ABC Private Dining Booking</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Sarabun', sans-serif; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Sarabun', sans-serif; }</style>
 </head>
-<body class="bg-slate-50 min-h-screen">
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
 
-    <div class="container mx-auto px-4 py-12">
-        <div class="max-w-xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
-            
-            <div class="bg-gradient-to-r from-indigo-700 to-blue-600 p-8 text-white text-center">
-                <h1 class="text-3xl font-bold">จองห้องทานอาหารส่วนตัว</h1>
-                <p class="mt-2 text-indigo-100 font-light">กรุณากรอกข้อมูลเพื่อตรวจสอบและจองห้อง</p>
+    <div class="max-w-lg w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+        <div class="bg-indigo-700 p-8 text-white text-center">
+            <h1 class="text-2xl font-bold">จองห้องทานอาหารส่วนตัว</h1>
+            <p class="text-indigo-100 mt-1 text-sm">ABC Private Dining Experience</p>
+        </div>
+
+        <form id="bookingForm" class="p-8 space-y-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">วันที่ต้องการจอง</label>
+                    <input type="date" id="date" name="date" required class="w-full border-gray-200 border rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">ประเภทห้อง</label>
+                    <select id="roomType" name="roomType" required class="w-full border-gray-200 border rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                        <option value="">เลือกประเภทห้อง</option>
+                        <option value="VIP">VIP (มัดจำ 200.-)</option>
+                        <option value="Meeting">Meeting (มัดจำ 500.-)</option>
+                    </select>
+                </div>
             </div>
 
-            <form id="bookingForm" class="p-8 space-y-5">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">วันที่ต้องการจอง</label>
-                        <input type="date" id="date" name="date" required 
-                               class="w-full border-gray-200 border-2 rounded-xl p-3 focus:border-indigo-500 focus:ring-0 outline-none transition-all">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">ประเภทห้อง</label>
-                        <select id="roomType" name="roomType" required 
-                                class="w-full border-gray-200 border-2 rounded-xl p-3 focus:border-indigo-500 focus:ring-0 outline-none transition-all">
-                            <option value="">เลือกประเภทห้อง</option>
-                            <option value="VIP">VIP Room (มัดจำ 200.-)</option>
-                            <option value="Meeting">Meeting Room (มัดจำ 500.-)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">เวลาเริ่มต้น</label>
-                        <input type="time" id="startTime" name="startTime" required 
-                               class="w-full border-gray-200 border-2 rounded-xl p-3 focus:border-indigo-500 focus:ring-0 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">เวลาสิ้นสุด</label>
-                        <input type="time" id="endTime" name="endTime" required 
-                               class="w-full border-gray-200 border-2 rounded-xl p-3 focus:border-indigo-500 focus:ring-0 outline-none">
-                    </div>
-                </div>
-
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">หมายเหตุ</label>
-                    <textarea id="note" name="note" rows="2" 
-                              class="w-full border-gray-200 border-2 rounded-xl p-3 focus:border-indigo-500 outline-none" 
-                              placeholder="เช่น แพ้อาหาร หรือจำนวนท่าน..."></textarea>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">เวลาเริ่มต้น</label>
+                    <input type="time" name="startTime" required class="w-full border-gray-200 border rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
-
-                <div class="bg-indigo-50 p-5 rounded-2xl flex justify-between items-center border border-indigo-100">
-                    <span class="font-bold text-indigo-900">ยอดเงินมัดจำที่ต้องชำระ:</span>
-                    <span id="depositDisplay" class="text-2xl font-black text-indigo-600">0 บาท</span>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">เวลาสิ้นสุด</label>
+                    <input type="time" name="endTime" required class="w-full border-gray-200 border rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
+            </div>
 
-                <button type="submit" 
-                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg active:scale-95">
-                    ยืนยันการจอง
-                </button>
-            </form>
-        </div>
-        
-        <footer class="mt-8 text-center text-gray-400 text-sm">
-            © 2025 ABC จำกัด - ระบบจองห้องอาหารส่วนตัว
-        </footer>
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">หมายเหตุ</label>
+                <textarea name="note" rows="2" class="w-full border-gray-200 border rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="แพ้อาหาร หรือความต้องการเพิ่มเติม..."></textarea>
+            </div>
+
+            <div class="bg-indigo-50 p-4 rounded-xl flex justify-between items-center">
+                <span class="font-bold text-indigo-900">ยอดเงินมัดจำ:</span>
+                <span id="depositDisplay" class="text-xl font-black text-indigo-600">0 บาท</span>
+            </div>
+
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition-all">
+                ยืนยันการจอง
+            </button>
+        </form>
     </div>
 
     <script>
-        // URL ของ Google Apps Script Web App ที่ได้รับมา
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyL4nXwe1Pw3W36VIX8bQuk2srz--aKDr2yhwJD4EQ87vp7z_LUY7ZWCNuZQsnvhok5/exec';
         const form = document.getElementById('bookingForm');
         const depositDisplay = document.getElementById('depositDisplay');
 
-        // ฟังก์ชันคำนวณเงินมัดจำแบบ Real-time
+        // คำนวณยอดมัดจำ
         document.getElementById('roomType').addEventListener('change', (e) => {
-            const val = e.target.value;
-            const price = val === 'VIP' ? 200 : (val === 'Meeting' ? 500 : 0);
+            const price = e.target.value === 'VIP' ? 200 : (e.target.value === 'Meeting' ? 500 : 0);
             depositDisplay.innerText = price + ' บาท';
         });
 
         form.addEventListener('submit', e => {
             e.preventDefault();
             
-            // แสดง Loading ขณะรอ Backend ประมวลผล
             Swal.fire({
-                title: 'กำลังตรวจสอบสถานะห้อง...',
+                title: 'กำลังตรวจสอบข้อมูล...',
                 text: 'กรุณารอสักครู่',
                 allowOutsideClick: false,
                 didOpen: () => { Swal.showLoading(); }
             });
 
-            // รวบรวมข้อมูลจากฟอร์ม
             const fd = new FormData(form);
-            const depositAmount = fd.get('roomType') === 'VIP' ? 200 : 500;
-            fd.append('deposit', depositAmount);
+            const depAmount = fd.get('roomType') === 'VIP' ? 200 : 500;
+            fd.append('deposit', depAmount);
 
-            // ส่งข้อมูลไปยัง Google Apps Script ด้วยรูปแบบ URLSearchParams (เสถียรที่สุด)
+            // ส่งแบบ URLSearchParams เพื่อเลี่ยงปัญหา CORS และ JSON Parsing Error
             fetch(scriptURL, { 
                 method: 'POST', 
                 body: new URLSearchParams(fd) 
@@ -114,31 +93,16 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'จองห้องสำเร็จ!',
-                        text: data.message,
-                        confirmButtonColor: '#4F46E5'
-                    });
+                    Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: data.message, confirmButtonColor: '#4F46E5' });
                     form.reset();
                     depositDisplay.innerText = '0 บาท';
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'ไม่สามารถจองได้',
-                        text: data.message,
-                        confirmButtonColor: '#EF4444'
-                    });
+                    Swal.fire({ icon: 'error', title: 'จองไม่สำเร็จ', text: data.message, confirmButtonColor: '#EF4444' });
                 }
             })
             .catch(error => {
-                console.error('Error!', error.message);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'เกิดข้อผิดพลาด',
-                    text: 'ไม่สามารถเชื่อมต่อกับระบบได้ กรุณาลองใหม่อีกครั้ง',
-                    confirmButtonColor: '#EF4444'
-                });
+                console.error(error);
+                Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการตั้งค่า "Anyone" ใน Apps Script', confirmButtonColor: '#EF4444' });
             });
         });
     </script>
