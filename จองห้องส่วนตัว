@@ -1,5 +1,5 @@
 // 1. นำ URL ที่ได้จากขั้นตอนที่แล้วมาวางตรงนี้
-const scriptURL = 'AKfycbzN57vVT-OIGDRVDlXxWqOA5JAkMj7T5Q1wZjHNhDk';
+const scriptURL = 'https://script.google.com/macros/s/AKfycbwCDRobZEDPpAuDTEfL8AtpEmvd-7SR4mDaYecYM7sKNyAkItlAJMGOHhsh48TfoXhj/exec';
 
 function handleFormSubmit(formObject) {
     event.preventDefault();
