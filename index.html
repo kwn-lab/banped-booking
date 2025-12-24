@@ -1,61 +1,115 @@
-<script>
-    // 1. ตรวจสอบให้มั่นใจว่า URL ลงท้ายด้วย /exec
-    const scriptURL = 'ใส่_WEB_APP_URL_ที่นี่'; 
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Dining Booking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Sarabun', sans-serif; }</style>
+</head>
+<body class="bg-slate-50 min-h-screen">
 
-    const roomTypeSelect = document.getElementById('roomType');
-    const depositDisplay = document.getElementById('depositDisplay');
+    <div class="container mx-auto px-4 py-12">
+        <div class="max-w-xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+            <div class="bg-gradient-to-r from-indigo-700 to-blue-600 p-8 text-white text-center">
+                <h1 class="text-3xl font-bold">ระบบจองห้องทานอาหาร</h1>
+                <p class="mt-2 text-indigo-100">ABC Private Dining Experience</p>
+            </div>
 
-    roomTypeSelect.addEventListener('change', (e) => {
-        const prices = { 'VIP': 200, 'Meeting': 500 };
-        const price = prices[e.target.value] || 0;
-        depositDisplay.innerText = `${price} บาท`;
-    });
+            <form id="bookingForm" class="p-8 space-y-5">
+                <div class="grid grid-cols-1 gap-5">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">วันที่ต้องการจอง</label>
+                        <input type="date" id="date" name="date" required class="w-full border-gray-200 border-2 rounded-xl p-3 focus:border-indigo-500 focus:ring-0 outline-none transition-all">
+                    </div>
 
-    document.getElementById('bookingForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        Swal.fire({
-            title: 'กำลังตรวจสอบสถานะห้อง...',
-            allowOutsideClick: false,
-            didOpen: () => { Swal.showLoading(); }
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">ประเภทห้อง</label>
+                        <select id="roomType" name="roomType" required class="w-full border-gray-200 border-2 rounded-xl p-3 focus:border-indigo-500 focus:ring-0 outline-none transition-all">
+                            <option value="">เลือกประเภทห้อง</option>
+                            <option value="VIP">VIP Room (มัดจำ 200.-)</option>
+                            <option value="Meeting">Meeting Room (มัดจำ 500.-)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">เวลาเริ่มต้น</label>
+                        <input type="time" id="startTime" name="startTime" required class="w-full border-gray-200 border-2 rounded-xl p-3 focus:border-indigo-500 focus:ring-0 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">เวลาสิ้นสุด</label>
+                        <input type="time" id="endTime" name="endTime" required class="w-full border-gray-200 border-2 rounded-xl p-3 focus:border-indigo-500 focus:ring-0 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">หมายเหตุ (ถ้ามี)</label>
+                    <textarea id="note" name="note" rows="2" class="w-full border-gray-200 border-2 rounded-xl p-3 focus:border-indigo-500 outline-none" placeholder="แพ้อาหาร หรือความต้องการพิเศษ..."></textarea>
+                </div>
+
+                <div class="bg-indigo-50 p-5 rounded-2xl flex justify-between items-center border border-indigo-100">
+                    <span class="font-bold text-indigo-900">ยอดเงินมัดจำ:</span>
+                    <span id="depositDisplay" class="text-2xl font-black text-indigo-600">0 บาท</span>
+                </div>
+
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg active:scale-95">
+                    ยืนยันส่งข้อมูลจอง
+                </button>
+            </form>
+        </div>
+        <footer class="mt-8 text-center text-gray-400 text-sm">
+            © ABC จำกัด - ระบบจองอัตโนมัติ 2025
+        </footer>
+    </div>
+
+    <script>
+        const scriptURL = 'ใส่_WEB_APP_URL_ที่นี่';
+        const form = document.getElementById('bookingForm');
+        const depositDisplay = document.getElementById('depositDisplay');
+
+        // แสดงเงินมัดจำ
+        document.getElementById('roomType').addEventListener('change', (e) => {
+            const price = e.target.value === 'VIP' ? 200 : (e.target.value === 'Meeting' ? 500 : 0);
+            depositDisplay.innerText = price + ' บาท';
         });
 
-        const formData = {
-            date: document.getElementById('date').value,
-            startTime: document.getElementById('startTime').value,
-            endTime: document.getElementById('endTime').value,
-            roomType: document.getElementById('roomType').value,
-            note: document.getElementById('note').value,
-            deposit: document.getElementById('roomType').value === 'VIP' ? 200 : 500
-        };
-
-        try {
-            // ใช้เทคนิคการส่งแบบ Request ปกติ
-            const response = await fetch(scriptURL, {
-                method: 'POST',
-                mode: 'no-cors', // ใช้ no-cors เพื่อข้ามปัญหา Redirect ของ Google
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-
-            // เนื่องด้วยโหมด no-cors เราจะอ่าน JSON ไม่ได้ 
-            // แต่ถ้า fetch สำเร็จ (ไม่พ่น Error) มักแปลว่าข้อมูลเข้าแล้ว
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            
             Swal.fire({
-                icon: 'success',
-                title: 'ส่งคำขอจองสำเร็จ!',
-                text: 'ระบบกำลังบันทึกข้อมูล กรุณารอเจ้าหน้าที่ยืนยัน หรือเช็กที่ Google Sheets',
-                confirmButtonColor: '#4F46E5'
+                title: 'กำลังตรวจสอบห้องว่าง...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
             });
-            document.getElementById('bookingForm').reset();
-            depositDisplay.innerText = '0 บาท';
 
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'เกิดข้อผิดพลาด',
-                text: 'ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่ภายหลัง',
-                confirmButtonColor: '#EF4444'
+            // สร้าง FormData และเพิ่มเงินมัดจำ
+            const fd = new FormData(form);
+            const depositAmount = fd.get('roomType') === 'VIP' ? 200 : 500;
+            fd.append('deposit', depositAmount);
+
+            // ส่งแบบ URLSearchParams เพื่อเลี่ยงปัญหา CORS
+            fetch(scriptURL, { 
+                method: 'POST', 
+                body: new URLSearchParams(fd) 
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: data.message, confirmButtonColor: '#4F46E5' });
+                    form.reset();
+                    depositDisplay.innerText = '0 บาท';
+                } else {
+                    Swal.fire({ icon: 'error', title: 'จองไม่สำเร็จ', text: data.message, confirmButtonColor: '#EF4444' });
+                }
+            })
+            .catch(error => {
+                Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', confirmButtonColor: '#EF4444' });
             });
-        }
-    });
-</script>
+        });
+    </script>
+</body>
+</html>
