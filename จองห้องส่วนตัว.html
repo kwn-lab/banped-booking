@@ -1,42 +1,60 @@
-// 1. นำ URL ที่ได้จากขั้นตอนที่แล้วมาวางตรงนี้
-const scriptURL = 'https://script.google.com/macros/s/AKfycbwCDRobZEDPpAuDTEfL8AtpEmvd-7SR4mDaYecYM7sKNyAkItlAJMGOHhsh48TfoXhj/exec';
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บันทึกข้อมูลลง Google Sheets</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; padding: 20px; }
+        .form-container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { color: #333; text-align: center; }
+        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #218838; }
+        #loading { display: none; text-align: center; color: #666; }
+    </style>
+</head>
+<body>
 
-function handleFormSubmit(formObject) {
-    event.preventDefault();
+<div class="form-container">
+    <h2>ส่งข้อมูล</h2>
+    <form id="myForm">
+        <input type="text" name="name" placeholder="ชื่อของคุณ" required>
+        <input type="email" name="email" placeholder="อีเมล" required>
+        <textarea name="message" rows="4" placeholder="ข้อความ"></textarea>
+        <button type="submit" id="submitBtn">ส่งข้อมูล</button>
+    </form>
+    <div id="loading">กำลังบันทึกข้อมูล...</div>
+</div>
+
+<script>
+    // *** สำคัญ: นำ URL ที่ได้จากขั้นตอน Deploy (Web App URL) มาวางที่นี่ ***
+    const scriptURL = 'วาง_WEB_APP_URL_ของคุณตรงนี้';
+
+    const form = document.getElementById('myForm');
+    const loading = document.getElementById('loading');
     const btn = document.getElementById('submitBtn');
-    const msgDiv = document.getElementById('message');
-    
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> กำลังบันทึก...';
-    msgDiv.className = "mt-3 text-center text-primary";
-    msgDiv.innerHTML = "รอสักครู่...";
 
-    // 2. ปรับโครงสร้างข้อมูลที่จะส่ง
-    const formData = {
-        name: formObject.name.value,
-        room: formObject.room.value,
-        bookingDate: formObject.bookingDate.value,
-        startTime: formObject.startTime.value,
-        endTime: formObject.endTime.value
-    };
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        btn.style.display = 'none';
+        loading.style.display = 'block';
 
-    // 3. ใช้ fetch แทน google.script.run
-    fetch(scriptURL, {
-        method: 'POST',
-        body: JSON.stringify(formData)
-    })
-    .then(response => {
-        msgDiv.className = "mt-3 text-center text-success";
-        msgDiv.innerHTML = "✅ บันทึกข้อมูลการจองสำเร็จ!";
-        document.getElementById('bookingForm').reset();
-        document.getElementById('bookingDate').valueAsDate = new Date();
-        btn.disabled = false;
-        btn.innerText = "ยืนยันการจอง";
-    })
-    .catch(error => {
-        msgDiv.className = "mt-3 text-center text-danger";
-        msgDiv.innerHTML = "❌ เกิดข้อผิดพลาด: " + error.message;
-        btn.disabled = false;
-        btn.innerText = "ลองอีกครั้ง";
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+            .then(response => {
+                alert("บันทึกข้อมูลสำเร็จ!");
+                form.reset();
+                btn.style.display = 'block';
+                loading.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
+                btn.style.display = 'block';
+                loading.style.display = 'none';
+            });
     });
-}
+</script>
+
+</body>
+</html>
